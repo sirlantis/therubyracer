@@ -1,11 +1,14 @@
 require 'mkmf'
 
+gcc = RbConfig::MAKEFILE_CONFIG['CPP'] =~ /g(\+\+|cc)/
+
 have_library('pthread')
 have_library('objc') if RUBY_PLATFORM =~ /darwin/
-$CPPFLAGS += " -Wall" unless $CPPFLAGS.split.include? "-Wall"
+
+$CPPFLAGS += " -Wall" unless $CPPFLAGS.split.include? "-Wall" || !gcc
 $CPPFLAGS += " -g" unless $CPPFLAGS.split.include? "-g"
 
-unless $CPPFLAGS.split.include? "-rdynamic"
+unless $CPPFLAGS.split.include? "-rdynamic" || !gcc
   $CPPFLAGS += " -rdynamic"
   $CPPFLAGS += " -fPIC" unless RUBY_PLATFORM =~ /darwin/
 end
